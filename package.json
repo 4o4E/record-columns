@@ -1,0 +1,19 @@
+{
+  "name": "ll-record-columns",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LiteLoaderQQNT 多列嵌套聊天记录浏览器",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node --check src/renderer.js && node --check src/preload.cjs && node --check src/main.cjs"
+  },
+  "dependencies": {
+    "@tanstack/virtual-core": "3.13.12",
+    "@vue/runtime-core": "3.5.12"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.8"
+  },
+  "packageManager": "pnpm@10.30.2"
+}

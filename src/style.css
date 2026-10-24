@@ -1,0 +1,169 @@
+.rc-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--text_primary);
+  background: var(--bg_bottom_standard);
+}
+.rc-columns {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-gutter: stable;
+}
+.rc-column {
+  display: flex;
+  flex: 0 0 410px;
+  flex-direction: column;
+  width: 410px;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+}
+.rc-column:last-child {
+  flex: 1 0 320px;
+  width: auto;
+  min-width: 320px;
+  border-right: 0;
+}
+.rc-column--collapsed {
+  flex-basis: 60px;
+  width: 60px;
+}
+.rc-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+.rc-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  overflow-anchor: none;
+  scrollbar-gutter: stable;
+}
+.rc-message-list { position: relative; width: 100%; box-sizing: border-box; }
+.rc-row {
+  display: flow-root;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px 12px;
+  border-left: 3px solid transparent;
+}
+.rc-row--selected {
+  border-left-color: var(--brand_standard, #0099ff);
+  background: color-mix(in srgb, var(--brand_standard, #0099ff) 10%, transparent);
+}
+.rc-row .message { min-width: 0; }
+.rc-row .message-content__wrapper { max-width: 100%; }
+.rc-row .forward-msg { cursor: pointer; }
+.rc-row .reply-element { cursor: pointer; }
+.rc-root button {
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 5px;
+  padding: 3px 9px;
+  color: var(--text_secondary);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.rc-root button:hover, .rc-root button:focus-visible {
+  color: var(--brand_standard, #0099ff);
+  background: color-mix(in srgb, var(--brand_standard, #0099ff) 10%, transparent);
+}
+.rc-root button:focus-visible { outline: 2px solid var(--brand_standard, #0099ff); }
+.rc-root button:disabled { cursor: wait; opacity: .55; }
+.rc-root .rc-close { border: 0; padding: 0 4px; font-size: 21px; }
+.rc-column--collapsed .rc-close,
+.rc-column--collapsed .rc-collapse {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+.rc-root .rc-collapse { flex: none; border: 0; padding: 2px 5px; font-size: 18px; line-height: 1; }
+.rc-column--collapsed .rc-column-header {
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+  min-height: 0;
+  padding: 8px 3px;
+  border-bottom: 0;
+}
+.rc-column--collapsed .rc-scroll { display: none; }
+.rc-status { padding: 24px 14px; color: var(--text_secondary); text-align: center; }
+.rc-inline-error { padding: 10px 12px; color: var(--text_primary); line-height: 1.6; }
+.rc-reply-backdrop {
+  position: fixed;
+  z-index: 2147483000;
+  inset: 0;
+  background: rgb(0 0 0 / 35%);
+}
+.rc-reply-dialog {
+  position: fixed;
+  z-index: 2147483001;
+  top: 50%;
+  left: 50%;
+  box-sizing: border-box;
+  width: 520px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 72px);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 10px;
+  color: var(--text_primary);
+  background: var(--bg_top_standard);
+}
+.rc-reply-dialog[open] { display: flex; flex-direction: column; }
+body:has(.rc-reply-dialog[open]) .q-context-menu {
+  z-index: 2147483002 !important;
+}
+.rc-reply-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.rc-reply-header h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.rc-reply-body {
+  min-height: 0;
+  max-height: calc(100vh - 132px);
+  padding: 14px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.rc-reply-body .message-content__wrapper { max-width: 100%; }
+.rc-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  line-height: 1.5;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+@media (max-width: 440px) {
+  .rc-column { flex-basis: 320px; width: 320px; }
+}
