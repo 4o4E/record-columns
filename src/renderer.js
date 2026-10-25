@@ -1,7 +1,7 @@
 import { createVNode } from '@vue/runtime-core';
 import { Columns } from './columns.js';
 import {
-  forwardFromMain, hasRecord, ipcValue, openMedia, replySource,
+  attachForwardSelector, detachForwardSelector, forwardFromMain, hasRecord, ipcValue, openMedia, replySource,
 } from './native.js';
 import styles from './style.css';
 const views = new Map();
@@ -131,7 +131,14 @@ class RecordView {
     this.refresh();
     try {
       if (!window.recordColumns) throw new Error('请重启 QQ，加载多列聊天记录插件的发送接口');
-      await window.recordColumns.forward(ipcValue({ record, root: column.info.rootMsg, element }));
+      // 内层消息不属于群消息列表；转发必须携带最外层到当前列的完整祖先身份。
+      const root = column.info.rootMsg;
+      const rootMsgIds = this.columns.items
+        .slice(0, this.columns.items.indexOf(column) + 1)
+        .map(item => item.info.parentMsgId);
+      if (rootMsgIds[0] !== root.msgId) rootMsgIds.unshift(root.msgId);
+      const result = await window.recordColumns.forward(ipcValue({ record, root, rootMsgIds, element }));
+      if (result?.warning) this.error = result.warning;
     } catch (error) {
       this.error = error.message;
       console.error('[多列聊天记录]', error);
@@ -394,6 +401,7 @@ function setEnabled(value) {
 }
 
 export function onVueComponentMount(component) {
+  attachForwardSelector(component);
   if (!isRecordList(component)) return;
   hosts.add(component);
   if (enabled !== true) return;
@@ -403,6 +411,7 @@ export function onVueComponentMount(component) {
 }
 
 export function onVueComponentUnmount(component) {
+  detachForwardSelector(component);
   hosts.delete(component);
   removeView(component);
 }
@@ -480,8 +489,8 @@ export async function onSettingWindowCreated(view) {
 // 主窗口承接原生联系人选择；消息和 rootMsg 通过 Electron IPC 保留原有数据类型。
 window.recordColumns?.onForwardRequest(async request => {
   try {
-    await forwardFromMain(request);
-    window.recordColumns.completeForward(request.requestId);
+    const result = await forwardFromMain(request);
+    window.recordColumns.completeForward(request.requestId, undefined, result);
   } catch (error) {
     console.error('[多列聊天记录]', error);
     window.recordColumns.completeForward(request.requestId, error.message);

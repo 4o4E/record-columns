@@ -3,7 +3,7 @@
   "type": "extension",
   "name": "多列聊天记录",
   "slug": "record-columns",
-  "description": "逐列浏览嵌套聊天记录，独立滚动，查看回复原文与图片",
+  "description": "逐列浏览与单独转发嵌套聊天记录，独立滚动，查看回复原文与图片",
   "version": "0.1.0",
   "authors": [{ "name": "4o4E", "link": "https://github.com/4o4E" }],
   "platform": ["win32"],

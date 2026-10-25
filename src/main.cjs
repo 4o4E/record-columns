@@ -52,20 +52,29 @@ ipcMain.handle('record-columns:forward', (event, payload) => {
     const cleanup = () => {
       source.removeListener('destroyed', sourceClosed);
       target.webContents.removeListener('destroyed', targetClosed);
+      target.webContents.removeListener('did-start-navigation', targetNavigated);
       pending.delete(requestId);
     };
     const sourceClosed = () => { cleanup(); resolve(); };
     const targetClosed = () => { cleanup(); reject(new Error('QQ 主窗口已经关闭')); };
+    // 主窗口刷新会销毁选择器所在的渲染环境，但不会销毁 webContents。
+    const targetNavigated = (_event, _url, isInPlace, isMainFrame) => {
+      if (!isInPlace && isMainFrame) {
+        cleanup();
+        reject(new Error('QQ 主窗口已重新加载，请重新选择转发对象'));
+      }
+    };
     pending.set(requestId, {
       targetId: target.webContents.id,
-      finish(error) {
+      finish(error, result) {
         cleanup();
         if (error) reject(new Error(error));
-        else resolve();
+        else resolve(result);
       },
     });
     source.once('destroyed', sourceClosed);
     target.webContents.once('destroyed', targetClosed);
+    target.webContents.on('did-start-navigation', targetNavigated);
     if (target.isMinimized()) target.restore();
     target.show();
     target.focus();
@@ -73,10 +82,10 @@ ipcMain.handle('record-columns:forward', (event, payload) => {
   });
 });
 
-ipcMain.on('record-columns:forward-complete', (event, requestId, error) => {
+ipcMain.on('record-columns:forward-complete', (event, requestId, error, result) => {
   const request = pending.get(requestId);
   if (!request || request.targetId !== event.sender.id) return;
-  request.finish(error);
+  request.finish(error, result);
 });
 
 ipcMain.on('record-columns:ready', event => {

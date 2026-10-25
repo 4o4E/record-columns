@@ -19,7 +19,7 @@ if (!contextBridge.executeInMainWorld({ func: () => Object.hasOwn(window, 'recor
       ipcRenderer.on('record-columns:forward-request', listener);
       return () => ipcRenderer.removeListener('record-columns:forward-request', listener);
     },
-    completeForward: (requestId, error) =>
-      ipcRenderer.send('record-columns:forward-complete', requestId, error),
+    completeForward: (requestId, error, result) =>
+      ipcRenderer.send('record-columns:forward-complete', requestId, error, result),
   });
 }
